@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EWSC Visitor Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0073ae;
+            --secondary-green: #28a745;
+            --accent-orange: #ff9800;
+            --light-gray: #f4f6f9;
+            --dark-gray: #343a40;
+            --text-color: #333;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --bg-color: #f4f6f9;
+            --card-bg: white;
+            --header-bg: #0073ae;
+            --border-color: #ddd;
+            --footer-bg: transparent;
+            --footer-text: #343a40;
+        }
+
+        [data-theme="dark"] {
+            --primary-blue: #4da8da;
+            --secondary-green: #5cdb95;
+            --accent-orange: #ffaa33;
+            --light-gray: #2c3e50;
+            --dark-gray: #ecf0f1;
+            --text-color: #ecf0f1;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            --bg-color: #1a1a2e;
+            --card-bg: #16213e;
+            --header-bg: #0f3460;
+            --border-color: #4da8da;
+            --footer-bg: #0f3460;
+            --footer-text: #ecf0f1;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--bg-color) 0%, var(--light-gray) 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: var(--header-bg);
+            color: white;
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
+            width: 95px; 
+            height: 99px; 
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            padding: 5px; 
+        }
+        
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+        }
+        
+        .header-text h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .header-text p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(30deg);
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo {
+                width: 70px; 
+                height: 73px; 
+            }
+            
+            .header-text h1 {
+                font-size: 20px; 
+            }
+        }
+        
+        .form-section, .info-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+        
+        .section-title {
+            color: var(--primary-blue);
+            font-size: 22px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            transition: all 0.3s;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-blue);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 115, 174, 0.2);
+        }
+        
+        .signature-container {
+            margin: 25px 0;
+            padding: 20px;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .signature-title {
+            font-weight: 500;
+            margin-bottom: 15px;
+            color: var(--primary-blue);
+        }
+        
+        #signature-pad {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin: 0 auto;
+            cursor: crosshair;
+        }
+        
+        .signature-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            padding: 14px 25px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #005a8c;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary-green);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        
+        .btn-clear {
+            background: var(--accent-orange);
+            color: white;
+        }
+        
+        .btn-clear:hover {
+            background: #e08800;
+            transform: translateY(-2px);
+        }
+        
+        .form-actions {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .info-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .info-card {
+            background: var(--light-gray);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-blue);
+        }
+        
+        .info-card h3 {
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: var(--footer-text);
+            font-size: 14px;
+            background: var(--footer-bg);
+            border-radius: 0 0 12px 12px;
+        }
+        
+        .water-mark {
+            position: absolute;
+            opacity: 0.03;
+            font-size: 180px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            pointer-events: none;
+            z-index: -1;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+        }
+
+        .warning {
+            color: var(--accent-orange);
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="water-mark">EWSC WATER</div>
+    
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <div class="logo">
+                    <img src="image1.png" alt="EWSC Logo">
+                </div>
+                <div class="header-text">
+                    <h1>Eswatini Water Services Corporation</h1>
+                    <p>Visitor Management System</p>
+                </div>
+            </div>
+            <button class="theme-toggle" id="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </header>
+        
+        <div class="content">
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-user-check"></i> Visitor Check-In</h2>
+                
+                <form id="visitor-form">
+                    <div class="form-group">
+                        <label for="visitor-name"><i class="fas fa-user"></i> Visitor/Driver Name</label>
+                        <input type="text" id="visitor-name" required placeholder="Enter full name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="organization"><i class="fas fa-building"></i> Organization</label>
+                        <input type="text" id="organization" required placeholder="Enter organization name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="vehicle-reg"><i class="fas fa-car"></i> Vehicle Registration Number</label>
+                        <input type="text" id="vehicle-reg" placeholder="Enter vehicle registration number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="passengers"><i class="fas fa-users"></i> Number of Passengers</label>
+                        <input type="number" id="passengers" min="0" value="0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reason"><i class="fas fa-clipboard-list"></i> Reason for Visit</label>
+                        <select id="reason" required>
+                            <option value="">Select reason for visit</option>
+                            <option value="Meeting">Meeting</option>
+                            <option value="Delivery">Delivery</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Interview">Interview</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="other-reason-container" style="display: none;">
+                        <label for="other-reason"><i class="fas fa-pen"></i> Specify Other Reason</label>
+                        <input type="text" id="other-reason" placeholder="Please specify reason">
+                    </div>
+                    
+                    <div class="signature-container">
+                        <div class="signature-title"><i class="fas fa-signature"></i> Visitor/Driver Signature</div>
+                        <canvas id="signature-pad" width="500" height="150"></canvas>
+                        <div class="signature-actions">
+                            <button type="button" class="btn btn-clear" id="clear-signature">
+                                <i class="fas fa-eraser"></i> Clear Signature
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-check-circle"></i> Submit Check-In
+                        </button>
+                        <button type="reset" class="btn btn-clear">
+                            <i class="fas fa-times-circle"></i> Reset Form
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="info-section">
+                <h2 class="section-title"><i class="fas fa-info-circle"></i> Visitor Information</h2>
+                
+                <div class="info-cards">
+                    <div class="info-card">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Important Notice</h3>
+                        <p>All visitors must check in at the security desk upon arrival and check out when departing.</p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3><i class="fas fa-clock"></i> Visiting Hours</h3>
+                        <p>Monday - Friday: 8:00 AM - 5:00 PM</p>
+                        <p>Saturday: 9:00 AM - 1:00 PM</p>
+                        <p>Sunday: Closed except for emergencies</p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3><i class="fas fa-id-card"></i> Identification Required</h3>
+                        <p>All visitors must present valid government-issued identification upon request.</p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3><i class="fas fa-shield-alt"></i> Security Procedures</h3>
+                        <p>All bags and packages are subject to inspection. Visitors must wear passes at all times while on ESWC premises.</p>
+                    </div>
+                </div>
+                
+                <h2 class="section-title" style="margin-top: 30px;"><i class="fas fa-qrcode"></i> Quick Check-In</h2>
+                <div style="text-align: center; margin: 20px 0;">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://eswc.org/visitor" alt="QR Code for Visitor Check-In">
+                    <p style="margin-top: 10px; font-size: 14px;">Scan this code to check in using your mobile device</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2024 Eswatini Water Services Corporation | All visitors are subject to ESWC security policies</p>
+            <p>Document: 4_GEN_Security Access Control Sheet_002 | Revision: 02 | Effective Date: 01 July 2024</p>
+            <p class="warning"><strong>WARNING:</strong> Once downloaded or printed this document becomes an UNCONTROLLED COPY.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+      
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        const currentTheme = localStorage.getItem('theme') || (prefersDarkScheme.matches ? 'dark' : 'light');
+        
+       
+        if (currentTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+            themeIcon.classList.remove('fa-sun');
+            themeIcon.classList.add('fa-moon');
+        }
+        
+        
+        themeToggle.addEventListener('click', function() {
+            let theme;
+            if (document.documentElement.getAttribute('data-theme') === 'dark') {
+                document.documentElement.removeAttribute('data-theme');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                theme = 'light';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                theme = 'dark';
+            }
+            localStorage.setItem('theme', theme);
+        });
+
+        document.getElementById('reason').addEventListener('change', function() {
+            const otherReasonContainer = document.getElementById('other-reason-container');
+            otherReasonContainer.style.display = this.value === 'Other' ? 'block' : 'none';
+        });
+
+       
+        const canvas = document.getElementById('signature-pad');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        
+        
+        ctx.lineWidth = 2;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary-blue');
+        
+       
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('touchstart', handleTouchStart);
+        
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('touchmove', handleTouchMove);
+        
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('touchend', stopDrawing);
+        
+        canvas.addEventListener('mouseout', stopDrawing);
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+        
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+            
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+        
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+        
+        function stopDrawing() {
+            isDrawing = false;
+        }
+        
+        // for Clearing signature
+        document.getElementById('clear-signature').addEventListener('click', function() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+        
+        
+
+    
+    document.getElementById('clear-signature').addEventListener('click', function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+    
+  
+    document.getElementById('visitor-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      
+      const signatureDataUrl = canvas.toDataURL();
+      
+   
+      const formData = new FormData();
+      formData.append('name', document.getElementById('visitor-name').value);
+      formData.append('organization', document.getElementById('organization').value);
+      formData.append('vehicle_reg', document.getElementById('vehicle-reg').value);
+      formData.append('passengers', document.getElementById('passengers').value);
+      formData.append('reason', document.getElementById('reason').value);
+      formData.append('other_reason', document.getElementById('other-reason').value);
+      
+     // for coverting Data to URL
+      const signatureBlob = dataURLToBlob(signatureDataUrl);
+      formData.append('signature', signatureBlob, 'signature.png');
+      
+      try {
+        const response = await fetch('/api/visitors/check-in', {
+          method: 'POST',
+          body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          alert(`Thank you for checking in! Your reference ID is ${result.id}`);
+          this.reset();
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        } else {
+          alert('Error checking in: ' + result.error);
+        }
+      } catch (error) {
+        alert('Error connecting to server: ' + error.message);
+      }
+    });
+
+   
+    function dataURLToBlob(dataURL) {
+      const parts = dataURL.split(';base64,');
+      const contentType = parts[0].split(':')[1];
+      const raw = window.atob(parts[1]);
+      const uInt8Array = new Uint8Array(raw.length);
+      
+      for (let i = 0; i < raw.length; ++i) {
+        uInt8Array[i] = raw.charCodeAt(i);
+      }
+      
+      return new Blob([uInt8Array], { type: contentType });
+    }
+
+        function updateSignatureColor() {
+            ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary-blue');
+        }
+
+        
+        const observer = new MutationObserver(updateSignatureColor);
+        observer.observe(document.documentElement, { 
+            attributes: true,
+            attributeFilter: ['data-theme']
+        });
+    </script>
+</body>
+}
+</html>

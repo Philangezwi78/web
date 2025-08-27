@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EWSC Visitor Admin</title>
+    <style>
+        /* Add admin-specific styles */
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #0073ae; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Current Visitors</h1>
+    <div id="visitors-list">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Organization</th>
+                    <th>Vehicle</th>
+                    <th>Check-in Time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="visitors-table-body">
+
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function loadCurrentVisitors() {
+            try {
+                const response = await fetch('/api/visitors/current');
+                const visitors = await response.json();
+                
+                const tableBody = document.getElementById('visitors-table-body');
+                tableBody.innerHTML = '';
+                
+                visitors.forEach(visitor => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${visitor.name}</td>
+                        <td>${visitor.organization}</td>
+                        <td>${visitor.vehicle_reg || 'N/A'}</td>
+                        <td>${new Date(visitor.check_in_time).toLocaleString()}</td>
+                        <td>
+                            <button onclick="checkOut(${visitor.id})">Check Out</button>
+                            <button onclick="viewDetails(${visitor.id})">View Details</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading visitors:', error);
+            }
+        }
+        
+        async function checkOut(visitorId) {
+            try {
+                const response = await fetch(`/api/visitors/${visitorId}/check-out`, {
+                    method: 'PUT'
+                });
+                
+                if (response.ok) {
+                    alert('Visitor checked out successfully');
+                    loadCurrentVisitors(); 
+                } else {
+                    alert('Error checking out visitor');
+                }
+            } catch (error) {
+                console.error('Error checking out visitor:', error);
+            }
+        }
+        
+        // Load visitors when page loads
+        document.addEventListener('DOMContentLoaded', loadCurrentVisitors);
+        
+    
+        setInterval(loadCurrentVisitors, 30000);
+    </script>
+</body>
+</html>
